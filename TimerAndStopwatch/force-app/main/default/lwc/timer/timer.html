@@ -1,0 +1,32 @@
+<template>
+    <lightning-card title="Timer" icon-name="custom:custom25">
+        
+        <template lwc:if={Selected}>
+            <lightning-input
+              label="Set Starting Counter"
+              type="number"
+              value={startCounter}
+              onchange={handleStartChange}>
+            </lightning-input>
+        </template>
+        <template lwc:else>
+            <c-time class="slds-show slds-is-relative">
+            </c-time>
+        </template>
+        <lightning-layout>
+                <lightning-layout-item flexibility="auto" padding="around-small">
+                    <lightning-button-stateful
+                        label-when-off="Start"
+                        label-when-on="Stop"
+                        selected={isSelected}
+                        onclick={handleClick}>
+                    </lightning-button-stateful>
+                    <lightning-button 
+                    label="Reset"
+                    onclick={actionHandler}>
+                    </lightning-button>
+                </lightning-layout-item>
+            
+        </lightning-layout>
+    </lightning-card>
+</template>
