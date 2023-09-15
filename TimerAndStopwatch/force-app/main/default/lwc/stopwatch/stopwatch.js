@@ -13,13 +13,13 @@ export default class Stopwatch extends LightningElement {
             this.label = 'Stop';
             console.log('Start')
         }
-        this.template.querySelector('c-time').StopWatchTimer(this.label);
+        this.template.querySelector('c-time').StopWatchHandler(this.label);
     }
     actionHandler(){
         this.label = 'Reset';
         console.log(this.label);
         this.isSelected = !this.isSelected;
-        this.template.querySelector('c-time').StopWatchTimer(this.label);
+        this.template.querySelector('c-time').StopWatchHandler(this.label);
     }
     
 }

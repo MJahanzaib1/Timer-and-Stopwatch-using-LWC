@@ -1,32 +1,39 @@
 <template>
     <lightning-card title="Timer" icon-name="custom:custom25">
         
-        <template lwc:if={Selected}>
-            <lightning-input
-              label="Set Starting Counter"
-              type="number"
-              value={startCounter}
-              onchange={handleStartChange}>
-            </lightning-input>
-        </template>
-        <template lwc:else>
-            <c-time class="slds-show slds-is-relative">
-            </c-time>
-        </template>
-        <lightning-layout>
+            <template lwc:if={isDisplayTime}>
+                <lightning-layout horizontal-align="spread">
+                    <lightning-layout-item size="4">
+                        <lightning-input type="number" placeholder="00h" value={hours} onchange={handleHoursChange}></lightning-input>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="4">
+                        <lightning-input type="number" placeholder="00m" value={minutes} onchange={handleMinutesChange}></lightning-input>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="4">
+                        <lightning-input type="number" placeholder="00s" value={seconds} onchange={handleSecondsChange}></lightning-input>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </template>
+            <template lwc:else>
+                <lightning-layout-item flexibility="auto" padding="around-small">
+                    <div class="slds-text-align_center slds-var-m-vertical_medium" >{displayTime}</div>
+                </lightning-layout-item>
+            </template>
+                
+            <lightning-layout>
                 <lightning-layout-item flexibility="auto" padding="around-small">
                     <lightning-button-stateful
                         label-when-off="Start"
                         label-when-on="Stop"
-                        selected={isSelected}
+                        selected={timerRunning}
                         onclick={handleClick}>
                     </lightning-button-stateful>
                     <lightning-button 
                     label="Reset"
-                    onclick={actionHandler}>
+                    onclick={resetTimer}>
                     </lightning-button>
-                </lightning-layout-item>
-            
+                </lightning-layout-item>    
         </lightning-layout>
+        
     </lightning-card>
 </template>

@@ -1,36 +1,105 @@
-import { LightningElement } from 'lwc';
+import { LightningElement, track } from 'lwc';
 
 export default class Timer extends LightningElement {
-    isSelected = false;
-    label = '';
-    startCounter = 0;
-    handleStartChange(event){
-        if(event.target.value===''){
-            console.log('In if event.target.value===')
-            this.startCounter = parseInt(0);
+    
+    @track displayTime = '00h 00m 00s';
+    @track timerDuration = 0;
+    @track timerRunning = false;
+    @track isDisplayTime = true;
+    hours = 0;
+    minutes = 0;
+    seconds = 0;
+    timerInterval = 0;
+    secondsPassed = 0;
+    handleHoursChange(event) {
+        if(event.target.value === ''){
+            this.hours = parseInt(0);
         }
         else{
-            console.log('In else event.target.value===')
-            this.startCounter = parseInt(event.target.value);
+            this.hours = parseInt(event.target.value);
         }
-        
     }
+
+    handleMinutesChange(event) {
+        if(event.target.value === ''){
+            this.minutes = parseInt(0);
+        }
+        else{
+            this.minutes = parseInt(event.target.value);
+        }
+    }
+
+    handleSecondsChange(event) {
+        if(event.target.value === ''){
+            this.seconds = parseInt(0);
+        }
+        else{
+            this.seconds = parseInt(event.target.value);
+        }
+    }
+
+    handleInputChange() {
+        this.secondsPassed = 0;
+        this.timerDuration = ( parseInt(this.hours) * 3600) + 
+        ( parseInt(this.minutes) * 60) + 
+        parseInt(this.seconds);
+    }
+
     handleClick() {
-        this.isSelected = !this.isSelected;
-        if(this.isSelected){
-            this.label = 'Start';
-            console.log('Stop')
+        this.timerRunning = !this.timerRunning;
+        if(this.timerRunning){
+            const temp = this.secondsPassed;
+            this.handleInputChange();
+            this.secondsPassed = temp;
+            this.startTimer();
         }
         else{
-            this.label = 'Stop';
-            console.log('Start')
+            this.stopTimer();
         }
-        this.template.querySelector('c-time').setStopWatchTimer(this.label);
     }
-    actionHandler(){
-        this.label = 'Reset';
-        console.log(this.label);
-        this.isSelected = !this.isSelected;
-        this.template.querySelector('c-time').setStopWatchTimer(this.label);
+    startTimer() {
+        this.isDisplayTime = false;
+        const targetTime = new Date();
+        targetTime.setSeconds(targetTime.getSeconds() + parseInt(this.timerDuration) - this.secondsPassed);
+        this.updateTimer(targetTime);
+        this.secondsPassed++;
+        this.timerRunning = true;
+
+        this.timerInterval = setInterval(() => {
+            this.updateTimer(targetTime);
+            this.secondsPassed++;
+        }, 1000);
     }
+
+    stopTimer() {
+        clearInterval(this.timerInterval);
+        this.timerRunning = false;
+    }
+
+    resetTimer() {
+        this.isDisplayTime = true;
+        clearInterval(this.timerInterval);
+        this.timerRunning = false;
+        this.displayTime = '00h 00m 00s';
+        this.timerDuration = 0;
+        this.secondsPassed = 0;
+    }
+
+    updateTimer(targetTime) {
+        const currentTime = new Date();
+        const timeDifference = Math.max(targetTime - currentTime, 0);
+        const hrs = Math.floor(timeDifference / 3600000);
+        const min = Math.floor((timeDifference % 3600000) / 60000);
+        const sec = (Math.floor((timeDifference % 60000) / 1000))
+        const hrsDisplay = hrs > 0 ? hrs + ' h ': '';
+        const minDisplay = min > 0 ? min + ' m ': '';
+        const secDisplay = sec > 0 ? sec + ' s ': '00s';
+        this.displayTime = hrsDisplay + minDisplay + secDisplay;
+        if (timeDifference === 0) {
+            this.stopTimer();
+            this.isDisplayTime = true;
+        }
+    }
+
 }
+
